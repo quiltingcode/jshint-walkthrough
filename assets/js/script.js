@@ -98,8 +98,8 @@ function displayExceptions(data) {
     let heading = "An Exception Occurred";
     let results = `<div>The API returned exception code ${data.status_code}</div>`;
     
-    results += `<div>Error number: ${data.error_no}</div>`;
-    results += `<div>Error text: ${data.error}</div>`;
+    results += `<div>Error number: <strong>${data.error_no}</strong></div>`;
+    results += `<div>Error text: <strong>${data.error}</strong></div>`;
 
     document.getElementById("resultsModalTitle").innerText = heading;
     document.getElementById("results-content").innerHTML = results;
