@@ -8,12 +8,14 @@ document.getElementById("submit").addEventListener("click", e => postForm(e));
 function processOptions(form) {
     let optArray = [];
 
-    for (let entry of form.entries()) {
-        if (entry[0] === "options") {
-            optArray.push(entry[1])
+    for (let e of form.entries()) {
+        if (e[0] === "options") {
+            optArray.push(e[1]);
         }
     }
+
     form.delete("options");
+
     form.append("options", optArray.join());
 
     return form;
@@ -34,8 +36,26 @@ async function postForm(e) {
     const data = await response.json();
 
     if (response.ok) {
-        displayErrors(data)
+        displayErrors(data);
     } else {
+        displayExceptions(data)
+        throw new Error(data.error);
+    }
+
+}
+
+async function getStatus(e) {
+
+    const queryString = `${API_URL}?api_key=${API_KEY}`;
+
+    const response = await fetch(queryString);
+
+    const data = await response.json();
+
+    if (response.ok) {
+        displayStatus(data);
+    } else {
+        displayExceptions(data)
         throw new Error(data.error);
     }
 
@@ -62,22 +82,6 @@ function displayErrors(data) {
     resultsModal.show();
 }
 
-async function getStatus(e) {
-
-    const queryString = `${API_URL}?api_key=${API_KEY}`;
-
-    const response = await fetch(queryString);
-
-    const data = await response.json();
-
-    if (response.ok) {
-        displayStatus(data);
-    } else {
-        throw new Error(data.error);
-    }
-
-}
-
 function displayStatus(data) {
 
     let heading = "API Key Status";
@@ -88,4 +92,16 @@ function displayStatus(data) {
     document.getElementById("results-content").innerHTML = results;
     resultsModal.show();
 
+}
+
+function displayExceptions(data) {
+    let heading = "An Exception Occurred";
+    let results = `<div>The API returned exception code ${data.status_code}</div>`;
+    
+    results += `<div>Error number: ${data.error_no}</div>`;
+    results += `<div>Error text: ${data.error}</div>`;
+
+    document.getElementById("resultsModalTitle").innerText = heading;
+    document.getElementById("results-content").innerHTML = results;
+    resultsModal.show();
 }
